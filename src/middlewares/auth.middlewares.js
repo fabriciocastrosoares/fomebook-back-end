@@ -19,7 +19,7 @@ export async function userExists(req, res, next) {
 
         const { id, name, password: savedPassword } = user.rows[0];
 
-        await db.query(`DELETE FROM sessions WHERE "userId" = $1`, [id]);
+        // await db.query(`DELETE FROM sessions WHERE "userId" = $1`, [id]);
         
         res.locals.savedPassword = savedPassword;
         res.locals.id = id;

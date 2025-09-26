@@ -5,7 +5,7 @@ import { authenticate } from "../middlewares/validateAuth.middlewares.js";
 const usersRouter = Router();
 
 usersRouter.get("/users/me", authenticate, getUser );
-usersRouter.get("/users/:id", getUserById);
-usersRouter.get("/users", getUserBySearch);
+usersRouter.get("/users/search", authenticate, getUserBySearch);
+usersRouter.get("/users/:id", authenticate, getUserById);
 
 export default usersRouter;
