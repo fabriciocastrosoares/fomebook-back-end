@@ -23,14 +23,16 @@ export async function getPosts(req, res) {
 };
 
 
-export async function getPotsByUser(req, res) {
-    const {id} = req.params;
+export async function getPostsByUser(req, res) {
+  const { id } = req.params;
+  const { userId } = res.locals;
 
-    try{
-        const result = await getUserPostsById(id);
-        if (result.rowCount === 0) return res.status(404).send("Usuário não encontrado");
-        res.send(result.rows[0]);
-    } catch (err) {
-        res.status(500).send(err.message);
-    }
+  try {
+    const result = await getUserPostsById(id, userId);
+    if (result.rowCount === 0) return res.status(404).send("Usuário não encontrado");
+    res.send(result.rows[0]);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
 };
+

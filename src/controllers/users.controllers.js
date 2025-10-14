@@ -1,24 +1,23 @@
 import { getUserPostsById, searchUsersByName } from "../repositores/users.repositores.js";
 
 export async function getUser(req, res) {
-    const { userId } = res.locals;
+    const { userId } = res.locals; 
+
     try {
-        const result = await getUserPostsById(userId);
+        const result = await getUserPostsById(userId, userId); 
         if (result.rowCount === 0) return res.status(404).send("Usuário não encontrado");
         
         res.send(result.rows[0]);
     } catch (err) {
         res.status(500).send(err.message);
     }
-
 };
 
-
 export async function getUserById(req, res) {
-    const { id } = req.params;
-
+    const { id } = req.params; 
+    const { userId } = res.locals; 
     try {
-        const result = await getUserPostsById(id);
+        const result = await getUserPostsById(id, userId);
         if (result.rowCount === 0) return res.status(404).send("Usuário não encontrado");
 
         res.send(result.rows[0]);
@@ -26,7 +25,6 @@ export async function getUserById(req, res) {
         res.status(500).send(err.message);
     }
 };
-
 
 export async function getUserBySearch(req, res) {
     const { name } = req.query;
@@ -39,3 +37,5 @@ export async function getUserBySearch(req, res) {
         res.status(500).send(err.message);
     }
 };
+
+

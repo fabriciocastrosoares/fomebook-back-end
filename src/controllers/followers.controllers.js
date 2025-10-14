@@ -1,5 +1,5 @@
 import { checkIfFollowing, deleteFollow, getFollowersByUserId, getFollowingByUserId, insertFollow } from "../repositores/followers.repositores.js";
-import { getUserPostsById } from "../repositores/users.repositores.js";
+import { getUserById, getUserPostsById } from "../repositores/users.repositores.js";
 
 export async function userFollow(req, res) {
     const { id: followedId } = req.params;
@@ -7,10 +7,10 @@ export async function userFollow(req, res) {
 
     if (Number(followedId) === followerId) {
         return res.status(400).send("Você não pode seguir a si mesmo.");
-    }
+    };
 
     try {
-        const userToFollow = await getUserPostsById(followedId);
+        const userToFollow = await getUserById(followedId);
         if (userToFollow.rowCount === 0) {
             return res.status(404).send("Usuário não encontrado.");
         }
@@ -36,7 +36,7 @@ export async function unfollow(req, res) {
     }
 
     try {
-        const userToUnfollow = await getUserPostsById(followedId);
+        const userToUnfollow = await getUserById(followedId);
         if (userToUnfollow.rowCount === 0) {
             return res.status(404).send("Usuário não encontrado.");
         }
@@ -55,15 +55,14 @@ export async function unfollow(req, res) {
 
 export async function getFollowers(req, res) {
     const { id } = req.params;
-
     try {
         const user = await getUserPostsById(id);
         if (user.rowCount === 0) return res.status(404).send("Usuário não encontrado.");
-
         const followers = await getFollowersByUserId(id);
         res.send(followers.rows);
     } catch (err) {
         res.status(500).send(err.message);
+
     }
 };
 
@@ -71,7 +70,7 @@ export async function getFollwings(req, res) {
     const { id } = req.params;
 
     try {
-        const user = await getUserPostsById(id);
+        const user = await getUserById(id);
         if (user.rowCount === 0) return res.status(404).send("Usuário não encontrado.");
 
         const following = await getFollowingByUserId(id);
@@ -80,3 +79,4 @@ export async function getFollwings(req, res) {
         res.status(500).send(err.message);
     }
 };
+
