@@ -23,3 +23,7 @@ export function getPostsDb(userId) {
         ORDER BY p."createdAt" DESC;
     `, [userId]);
 };
+
+export function deletePostDb(id){
+    return db.query(`DELETE FROM posts WHERE id = $1;`, [id])
+};

@@ -18,8 +18,6 @@ export async function userExists(req, res, next) {
         if (user.rowCount === 0) return res.status(404).send("E-mail não cadastrado");
 
         const { id, name, password: savedPassword } = user.rows[0];
-
-        // await db.query(`DELETE FROM sessions WHERE "userId" = $1`, [id]);
         
         res.locals.savedPassword = savedPassword;
         res.locals.id = id;

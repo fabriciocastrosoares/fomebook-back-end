@@ -1,4 +1,4 @@
-import { createPostDb, getPostsDb } from "../repositores/posts.repositores.js";
+import { createPostDb, deletePostDb, getPostsDb } from "../repositores/posts.repositores.js";
 import { getUserPostsById } from "../repositores/users.repositores.js";
 
 export async function createPost(req, res) {
@@ -9,6 +9,17 @@ export async function createPost(req, res) {
         res.status(201).send(result.rows[0]);
     } catch (err) {
         res.status(500).send(err.message);
+    }
+};
+
+export async function deletepost(req, res) {
+    const { id } = req.params;
+
+    try{
+        await deletePostDb(id);
+        res.sendStatus(204);
+    }catch (err) {
+       res.status(500).send(err.message); 
     }
 };
 
