@@ -4,3 +4,8 @@ export const postSchema = joi.object({
   pictureUrl: joi.string().uri().required(),
   description: joi.string().min(10).max(200).required()
 });
+
+
+export const updatePostSchema = joi.object({
+  description: joi.string().min(1).max(500).required()
+});
