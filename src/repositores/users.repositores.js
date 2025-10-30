@@ -1,7 +1,8 @@
 import { db } from "../database/database.connection.js";
 
 export function getUserPostsById(profileUserId, loggedUserId) {
-  return db.query(`
+  return db.query(
+    `
     SELECT
       u.id,
       u.name,
@@ -21,18 +22,36 @@ export function getUserPostsById(profileUserId, loggedUserId) {
               SELECT 1 FROM likes l WHERE l."postId" = p.id AND l."userId" = $2
             ),
             'likers', COALESCE((
-                SELECT json_agg(users.name)::json
-                FROM (
-                    SELECT "userId"
-                    FROM likes
-                    WHERE "postId" = p.id
-                    ORDER BY id DESC
-                    LIMIT 2
-                ) AS latest_likes
-                JOIN users ON users.id = latest_likes."userId"
+              SELECT json_agg(users.name)::json
+              FROM (
+                SELECT "userId"
+                FROM likes
+                WHERE "postId" = p.id
+                ORDER BY id DESC
+                LIMIT 2
+              ) AS latest_likes
+              JOIN users ON users.id = latest_likes."userId"
+            ), '[]'::json),
+            'comments', COALESCE((
+              SELECT json_agg(
+                json_build_object(
+                  'id', c.id,
+                  'text', c.text,
+                  'createdAt', c."createdAt",
+                  'user', json_build_object(
+                    'id', cu.id,
+                    'name', cu.name,
+                    'imageUrl', cu."imageUrl"
+                  )
+                )
+                ORDER BY c."createdAt" ASC
+              )
+              FROM comments c
+              JOIN users cu ON cu.id = c."userId"
+              WHERE c."postId" = p.id
             ), '[]'::json)
           )
-          ORDER BY p."createdAt" DESC  
+          ORDER BY p."createdAt" DESC
         )
         FROM posts p
         WHERE p."userId" = u.id
@@ -45,10 +64,10 @@ export function getUserPostsById(profileUserId, loggedUserId) {
     FROM users u
     WHERE u.id = $1
     GROUP BY u.id;
-  `, [profileUserId, loggedUserId]);
+    `,
+    [profileUserId, loggedUserId]
+  );
 };
-
-
 
 export function searchUsersByName(name) {
   return db.query(`

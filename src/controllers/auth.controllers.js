@@ -16,14 +16,14 @@ export async function signup(req, res) {
 
 export async function signin(req, res) {
     const { password } = req.body;
-    const { id, name, savedPassword } = res.locals;
+    const { id, name, savedPassword, image } = res.locals;
     try {
         const correctPassword = bcrypt.compareSync(password, savedPassword);
         if (!correctPassword) return res.status(401).send("Senha incorreta");
 
         const token = uuid();
         await createSession(id, token);
-        res.status(200).send({ name, token })
+        res.status(200).send({ name, token, image })
     } catch (err) {
         res.status(500).send(err.message);
     }

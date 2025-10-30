@@ -1,4 +1,4 @@
-import { createPostDb, deletePostDb, getPostsDb, getPostsLikeDb, updatePostsDb } from "../repositores/posts.repositores.js";
+import { createPostDb, deletePostDb, getTimeLineDb, updatePostsDb } from "../repositores/posts.repositores.js";
 import { getUserPostsById } from "../repositores/users.repositores.js";
 
 export async function createPost(req, res) {
@@ -18,16 +18,6 @@ export async function deletepost(req, res) {
     try {
         await deletePostDb(id);
         res.sendStatus(204);
-    } catch (err) {
-        res.status(500).send(err.message);
-    }
-};
-
-export async function getPosts(req, res) {
-    const { userId } = res.locals;
-    try {
-        const result = await getPostsDb(userId);
-        res.send(result.rows);
     } catch (err) {
         res.status(500).send(err.message);
     }
@@ -62,11 +52,12 @@ export async function updatePosts(req, res) {
     }
 };
 
-export async function getPostLikes(req, res) {
-    const { id } = req.params;
-    try {
-        const result = await getPostsLikeDb(id);
+export async function getTimeLine(req, res){
+    const { userId } = res.locals;
 
+    try{
+         const result = await getTimeLineDb(userId);
+        if (result.rowCount === 0) return res.status(404).send("Não foi possivel encontrar time-line");
         res.send(result.rows);
     } catch (err) {
         res.status(500).send(err.message);
