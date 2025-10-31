@@ -1,4 +1,4 @@
-import { createPostDb, deletePostDb, getTimeLineDb, updatePostsDb } from "../repositores/posts.repositores.js";
+import { createPostDb, createRepostDb, deletePostDb, getTimeLineDb, updatePostsDb } from "../repositores/posts.repositores.js";
 import { getUserPostsById } from "../repositores/users.repositores.js";
 
 export async function createPost(req, res) {
@@ -57,8 +57,19 @@ export async function getTimeLine(req, res){
 
     try{
          const result = await getTimeLineDb(userId);
-        if (result.rowCount === 0) return res.status(404).send("Não foi possivel encontrar time-line");
+        
         res.send(result.rows);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+};
+
+export async function repostPost(req, res) {
+    const { id } = req.params;
+    const { userId } = res.locals;
+    try {
+        await createRepostDb(userId, id);
+        res.sendStatus(201);
     } catch (err) {
         res.status(500).send(err.message);
     }

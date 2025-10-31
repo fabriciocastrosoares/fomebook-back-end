@@ -35,9 +35,8 @@ export async function postExist(req, res, next) {
         const post = await db.query(`SELECT * FROM posts WHERE id = $1`, [id]);
         if (post.rowCount === 0) return res.status(404).send("Post Não encontrado");
 
-        const { userId, id: postId } = post.rows[0];
-        
-        res.locals.userId = userId;
+        const { id: postId } = post.rows[0];
+       
         res.locals.postId = postId;
         
         next();
