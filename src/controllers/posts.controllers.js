@@ -65,13 +65,19 @@ export async function getTimeLine(req, res){
 };
 
 export async function repostPost(req, res) {
-    const { id } = req.params;
-    const { userId } = res.locals;
-    try {
-        await createRepostDb(userId, id);
-        res.sendStatus(201);
-    } catch (err) {
-        res.status(500).send(err.message);
+  const { id } = req.params;
+  const { userId } = res.locals;
+
+  try {
+    const result = await createRepostDb(userId, id);
+    if (result.rowCount === 0) {
+      return res.status(409).send({ error: "Você já repostou este post." });
     }
+    return res.status(201).send(result.rows[0]);
+  } catch (err) {
+    console.error("Erro ao repostar:", err);
+    return res.status(500).send({ error: "Erro interno ao repostar." });
+  }
 };
+
 
